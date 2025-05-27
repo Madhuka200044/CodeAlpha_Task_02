@@ -28,4 +28,31 @@ public class StockTradingPlatform
         marketStocks.put("TSLA", new Stock("TSLA", "Tesla Inc.", 700.00));
         marketStocks.put("NFLX", new Stock("NFLX", "Netflix Inc.", 500.00));
     }
+	
+	private static void displayWelcomeScreen() 
+	{
+        while (true) 
+		{
+            System.out.println("\n=== Stock Trading Platform ===");
+            System.out.println("1. Login");
+            System.out.println("2. Create Account");
+            System.out.println("3. Exit");
+            System.out.print("Enter choice: ");
+            
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+            
+            switch (choice) 
+			{
+                case 1 -> login();
+                case 2 -> createAccount();
+                case 3 -> 
+				{
+                    System.out.println("Exiting platform. Goodbye!");
+                    System.exit(0);
+                }
+                default -> System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
 }
