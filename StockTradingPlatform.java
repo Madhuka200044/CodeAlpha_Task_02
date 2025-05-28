@@ -55,4 +55,36 @@ public class StockTradingPlatform
             }
         }
     }
+	
+	private static void login() 
+	{
+        System.out.print("\nEnter username: ");
+        String username = scanner.nextLine();
+        
+        if (userPortfolios.containsKey(username)) 
+		{
+            currentUser = username;
+            System.out.println("Login successful!");
+            displayMainMenu();
+        } 
+		else 
+		{
+            System.out.println("User not found. Please create an account.");
+        }
+    }
+	private static void createAccount() 
+	{
+        System.out.print("\nEnter new username: ");
+        String username = scanner.nextLine();
+        
+        if (userPortfolios.containsKey(username)) 
+		{
+            System.out.println("Username already exists. Please choose another.");
+        } 
+		else 
+		{
+            userPortfolios.put(username, new Portfolio(username));
+            System.out.println("Account created successfully! Please login.");
+        }
+    }
 }
