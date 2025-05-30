@@ -251,5 +251,99 @@ public class StockTradingPlatform
             System.out.println("Sale cancelled.");
         }
     }
+	private static void viewPortfolio() {
+        Portfolio portfolio = userPortfolios.get(currentUser);
+        portfolio.displayHoldings();
+        portfolio.displayPortfolioValue(marketStocks);
+    }
+    
+    private static void viewTransactionHistory() {
+        userPortfolios.get(currentUser).displayTransactionHistory();
+    }
+}
+
+class Stock {
+    private String symbol;
+    private String companyName;
+    private double currentPrice;
+    
+    public Stock(String symbol, String companyName, double initialPrice) {
+        this.symbol = symbol;
+        this.companyName = companyName;
+        this.currentPrice = initialPrice;
+    }
+    
+    public String getSymbol() { return symbol; }
+    public String getCompanyName() { return companyName; }
+    public double getCurrentPrice() { return currentPrice; }
+    
+    public void updatePrice(double change) {
+        this.currentPrice += change;
+        if (this.currentPrice < 0) this.currentPrice = 0.01; // Prevent negative prices
+    }
+}
+
+class Portfolio 
+{
+    private String username;
+    private Map<String, Integer> holdings; // Stock symbol -> quantity
+    private List<Transaction> transactionHistory;
+    
+    public Portfolio(String username) 
+	{
+        this.username = username;
+        this.holdings = new HashMap<>();
+        this.transactionHistory = new ArrayList<>();
+    }
+    
+    public void addTransaction(Transaction transaction) 
+	{
+        String symbol = transaction.getStockSymbol();
+        int quantity = transaction.getQuantity();
+        
+        if (transaction.getType().equals("BUY")) 
+		{
+            holdings.put(symbol, holdings.getOrDefault(symbol, 0) + quantity);
+        } 
+		else if (transaction.getType().equals("SELL")) 
+		{
+            holdings.put(symbol, holdings.get(symbol) - quantity);
+            if (holdings.get(symbol) == 0) 
+			{
+                holdings.remove(symbol);
+            }
+        }
+        
+        transactionHistory.add(transaction);
+    }
+    
+    public boolean hasStock(String symbol) 
+	{
+        return holdings.containsKey(symbol);
+    }
+    
+    public int getSharesOwned(String symbol) 
+	{
+        return holdings.getOrDefault(symbol, 0);
+    }
+    
+    public Map<String, Integer> getHoldings() 
+	{
+        return holdings;
+    }
+    
+    public void displayHoldings() 
+	{
+        if (holdings.isEmpty()) 
+		{
+            System.out.println("You don't own any stocks.");
+            return;
+        }
+        
+        System.out.printf("%-6s %-10s%n", "Symbol", "Quantity");
+        System.out.println("--------------");
+        holdings.forEach((symbol, quantity) -> 
+            System.out.printf("%-6s %-10d%n", symbol, quantity));
+    }
     
 }
