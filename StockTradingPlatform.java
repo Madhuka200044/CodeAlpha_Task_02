@@ -262,22 +262,34 @@ public class StockTradingPlatform
     }
 }
 
-class Stock {
+class Stock 
+{
     private String symbol;
     private String companyName;
     private double currentPrice;
     
-    public Stock(String symbol, String companyName, double initialPrice) {
+    public Stock(String symbol, String companyName, double initialPrice) 
+	{
         this.symbol = symbol;
         this.companyName = companyName;
         this.currentPrice = initialPrice;
     }
     
-    public String getSymbol() { return symbol; }
-    public String getCompanyName() { return companyName; }
-    public double getCurrentPrice() { return currentPrice; }
+    public String getSymbol() 
+	{ 
+		return symbol; 
+	}
+    public String getCompanyName() 
+	{ 
+		return companyName; 
+	}
+    public double getCurrentPrice() 
+	{ 
+		return currentPrice; 
+	}
     
-    public void updatePrice(double change) {
+    public void updatePrice(double change) 
+	{
         this.currentPrice += change;
         if (this.currentPrice < 0) this.currentPrice = 0.01; // Prevent negative prices
     }
@@ -343,7 +355,83 @@ class Portfolio
         System.out.printf("%-6s %-10s%n", "Symbol", "Quantity");
         System.out.println("--------------");
         holdings.forEach((symbol, quantity) -> 
-            System.out.printf("%-6s %-10d%n", symbol, quantity));
+        System.out.printf("%-6s %-10d%n", symbol, quantity));
     }
+	public void displayPortfolioValue(Map<String, Stock> marketStocks) 
+	{
+        if (holdings.isEmpty()) 
+		{
+            System.out.println("Portfolio value: $0.00");
+            return;
+        }
+        
+        double totalValue = 0;
+        System.out.println("\nPortfolio Valuation:");
+        System.out.printf("%-6s %-10s %-10s %-10s%n", "Symbol", "Quantity", "Price", "Value");
+        System.out.println("----------------------------------");
+        
+        for (Map.Entry<String, Integer> entry : holdings.entrySet()) 
+		{
+            String symbol = entry.getKey();
+            int quantity = entry.getValue();
+            double price = marketStocks.get(symbol).getCurrentPrice();
+            double value = quantity * price;
+            totalValue += value;
+            
+            System.out.printf("%-6s %-10d $%-9.2f $%-9.2f%n", 
+                symbol, quantity, price, value);
+        }
+        
+        System.out.println("----------------------------------");
+        System.out.printf("Total Portfolio Value: $%.2f%n", totalValue);
+    }
+    
+    public void displayTransactionHistory() 
+	{
+        if (transactionHistory.isEmpty()) 
+		{
+            System.out.println("No transactions yet.");
+            return;
+        }
+        
+        System.out.println("\nTransaction History:");
+        System.out.printf("%-10s %-6s %-8s %-10s %-10s %-20s%n", 
+            "Type", "Symbol", "Quantity", "Price", "Amount", "Date/Time");
+        System.out.println("------------------------------------------------------------");
+        
+        for (Transaction t : transactionHistory) 
+		{
+            double amount = t.getPrice() * t.getQuantity();
+            String dateTime = t.getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            
+            System.out.printf("%-10s %-6s %-8d $%-9.2f $%-9.2f %-20s%n", 
+                t.getType(), t.getStockSymbol(), t.getQuantity(), 
+                t.getPrice(), amount, dateTime);
+        }
+    }
+}
+
+class Transaction 
+{
+    private String type; // BUY or SELL
+    private String stockSymbol;
+    private int quantity;
+    private double price;
+    private LocalDateTime dateTime;
+    
+    public Transaction(String type, String stockSymbol, int quantity, double price, LocalDateTime dateTime) 
+	{
+        this.type = type;
+        this.stockSymbol = stockSymbol;
+        this.quantity = quantity;
+        this.price = price;
+        this.dateTime = dateTime;
+    }
+    
+    public String getType() { return type; }
+    public String getStockSymbol() { return stockSymbol; }
+    public int getQuantity() { return quantity; }
+    public double getPrice() { return price; }
+    public LocalDateTime getDateTime() { return dateTime; }
     
 }
